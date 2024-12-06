@@ -31,22 +31,22 @@ class TodoRequest(BaseModel):
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-async def read_all(db: db_dependency):
+async def getAllTodos(db: db_dependency):
     return db.query(Todos).all()
 
 
-@router.get("/todo/{todo_id}", status_code=status.HTTP_200_OK)
-async def readt_todo(db: db_dependency, todo_id: int = Path(gt=0)):
-    todo_model = db.query(Todos).filter(Todos.id == todo_id).first()
-    if todo_model is not None:
-        return todo_model
+@router.get("/todo/{todoId}", status_code=status.HTTP_200_OK)
+async def getTodoById(db: db_dependency, todoId: int = Path(gt=0)):
+    todoModel = db.query(Todos).filter(Todos.id == todoId).first()
+    if todoModel is not None:
+        return todoModel
     raise HTTPException(status_code=404, detail='Todo not found.')
 
 
 @router.post("/todo", status_code=status.HTTP_201_CREATED)
-async def create_todo(db: db_dependency, todo_request: TodoRequest):
-    todo_model = Todos(**todo_request.model_dump())
-    db.add(todo_model)
+async def creatTodo(db: db_dependency, todo_request: TodoRequest):
+    todoModel = Todos(**todo_request.model_dump())
+    db.add(todoModel)
     db.commit()
 
 
