@@ -9,7 +9,11 @@ from starlette import status
 from pydantic import BaseModel, Field
 
 
-router = APIRouter()
+
+router = APIRouter(
+     prefix='/todo',
+    tags=['todo']
+)
 
 
 def get_db():
@@ -74,3 +78,5 @@ async def deleteTodo(db: db_dependency, todoId: int = Path(gt=0)):
         raise HTTPException(status_code=404, detail='Todo not found.')
     db.query(Todos).filter(Todos.id == todoId).delete()
     db.commit()
+
+
