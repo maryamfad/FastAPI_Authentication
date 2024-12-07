@@ -1,6 +1,4 @@
 
-
-
 # FastAPI Todo list app with SQLite Database
 
 This project is a FastAPI-based REST API that handles user todos . The responses are stored in a SQLite database. The app provides endpoints to authenticate users and retrieve/create/delete todos.
@@ -77,3 +75,5 @@ Once the server is running, you can access the application at http://127.0.0.1:8
 | `PUT`  | `/todo/todo/{todoId}`       | Update a to-do.          |
 | `DELETE` | `/todo/todo/{todoId}`     | Delete a to-do.          |
 | `POST` | `/todo/todo`                | Create a new to-do.      |
+
+<img width="727" alt="1" src="https://github.com/user-attachments/assets/bd15e687-53b5-488c-993a-a768944917fc">
