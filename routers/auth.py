@@ -11,6 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import timedelta, datetime, timezone
 
+
 router = APIRouter(
     prefix='/auth',
     tags=['auth']
@@ -19,7 +20,7 @@ router = APIRouter(
 bcryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2Bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
-SECRET_KEY = '2add83603940657d0d2cf6a1aacc708e'
+SECRET_KEY = '9ea41ecc448c75915e28e1f072a43b4b7329e265610ee885e4e2a1208045f946'
 ALGORITHM = 'HS256'
 
 
@@ -44,8 +45,8 @@ class CreateUserRequest(BaseModel):
 
 
 class Token(BaseModel):
-    accessToken: str
-    tokenType: str
+    access_token: str
+    token_type: str
 
 
 @router.get("/users", status_code=status.HTTP_200_OK)
@@ -61,7 +62,7 @@ async def getUserById(db: db_dependency, userId: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail='User not found.')
 
 
-@router.post("/create_auth", status_code=status.HTTP_201_CREATED)
+@router.post("/create_user", status_code=status.HTTP_201_CREATED)
 async def createUser(db: db_dependency, createUserRequest: CreateUserRequest):
     createUserModel = Users(
         email=createUserRequest.email,
@@ -103,8 +104,8 @@ async def deleteUser(db: db_dependency, userId: int = Path(gt=0)):
     db.commit()
 
 
-def authenticateUser(username: str, password: str, db):
-    user = db_dependency.query(Users).filter(
+def authenticateUser(username: str, password: str, db: db_dependency):
+    user = db.query(Users).filter(
         Users.username == username).first()
     if not user:
         return False
@@ -115,24 +116,31 @@ def authenticateUser(username: str, password: str, db):
 
 def createAccessToken(username: str, userId: int, expiresDelta: timedelta):
     encode = {'sub': username, 'id': userId}
-    expires = datetime.now(timezone.utc)
+    expires = datetime.now(timezone.utc) + expiresDelta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, ALGORITHM)
 
 
-async def getCurrentUser(token: Annotated[str, Depends(oauth2Bearer)]):
+async def get_current_user(token: Annotated[str, Depends(oauth2Bearer)]):
+
+    if not token or token == "undefined":
+        raise HTTPException(
+            status_code=401, detail="Authorization token is missing")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
         username: str = payload.get('sub')
         userId: int = payload.get('id')
 
         if userId is None or username is None:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find the user")
         return {'userId': userId, 'username': username}
-    except JWTError:
+
+    except JWTError as e:
+        print("JWTError:", e)
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate userrrrr")
 
 
 @router.post("/token", response_model=Token)
@@ -140,6 +148,6 @@ async def loginForAccessToken(formData: Annotated[OAuth2PasswordRequestForm, Dep
     user = authenticateUser(formData.username, formData.password, db)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user -- token")
     token = createAccessToken(user.username, user.id, timedelta(minutes=20))
-    return {'accessToken': token, 'tokenType': 'bearer'}
+    return {'access_token': token, 'token_type': 'bearer'}
