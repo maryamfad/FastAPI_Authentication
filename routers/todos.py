@@ -37,12 +37,17 @@ class TodoRequest(BaseModel):
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_all_todos(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Unauthorized')
     return db.query(Todos).filter(Todos.ownerId == user.get('id')).all()
 
 
 @router.get("/{todoId}", status_code=status.HTTP_200_OK)
-async def getTodoById(db: db_dependency, todoId: int = Path(gt=0)):
-    todoModel = db.query(Todos).filter(Todos.id == todoId).first()
+async def get_todo_by_id(user: user_dependency, db: db_dependency, todoId: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Unauthorized')
+    todoModel = db.query(Todos).filter(Todos.id == todoId).filter(
+        Todos.ownerId == user.get('id')).first()
     if todoModel is not None:
         return todoModel
     raise HTTPException(status_code=404, detail='Todo not found.')
@@ -53,7 +58,7 @@ async def creatTodo(user: user_dependency, db: db_dependency, todo_request: Todo
     print("user", user)
     if user is None:
         raise HTTPException(status_code=401, detail='Unauthorized')
-    todoModel = Todos(**todo_request.model_dump(), ownerId = user.get('id'))
+    todoModel = Todos(**todo_request.model_dump(), ownerId=user.get('id'))
     print(todoModel)
     db.add(todoModel)
     db.commit()
