@@ -1,5 +1,5 @@
 
-# FastAPI Todo list app with SQLite Database
+# FastAPI Todo list backend app with SQLite Database
 
 This project is a FastAPI-based REST API that handles user todos . The responses are stored in a SQLite database. The app provides endpoints to authenticate users and retrieve/create/delete todos.
 ** Features
