@@ -43,6 +43,7 @@ class CreateUserRequest(BaseModel):
     lastname: str
     password: str
     role: str
+    phone_number: str
 
 
 class Token(BaseModel):
@@ -72,7 +73,9 @@ async def createUser(db: db_dependency, createUserRequest: CreateUserRequest):
         lastname=createUserRequest.lastname,
         hashedPassword=bcryptContext.hash(createUserRequest.password),
         role=createUserRequest.role,
-        is_active=True
+        is_active=True,
+        phone_number=createUserRequest.phone_number
+        
     )
     db.add(createUserModel)
     db.commit()
