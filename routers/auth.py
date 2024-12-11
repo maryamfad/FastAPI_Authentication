@@ -11,6 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import timedelta, datetime, timezone
 
+import os 
 
 router = APIRouter(
     prefix='/auth',
@@ -20,8 +21,8 @@ router = APIRouter(
 bcryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2Bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
-SECRET_KEY = '9ea41ecc448c75915e28e1f072a43b4b7329e265610ee885e4e2a1208045f946'
-ALGORITHM = 'HS256'
+SECRET_KEY = os.environ['SECRET_KEY']
+ALGORITHM = os.environ['ALGORITHM']
 
 
 def get_db():
