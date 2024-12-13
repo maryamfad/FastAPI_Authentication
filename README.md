@@ -75,4 +75,5 @@ Once the server is running, you can access the application at http://127.0.0.1:8
 | `DELETE` | `/todo/todo/{todoId}`     | Delete a to-do.          |
 | `POST` | `/todo/todo`                | Create a new to-do.      |
 
-<img width="727" alt="1" src="https://github.com/user-attachments/assets/bd15e687-53b5-488c-993a-a768944917fc">
+<img width="687" alt="127 0 0 1_8000_docs" src="https://github.com/user-attachments/assets/1a1ea960-304a-44d8-b6c5-a9d84ac0244d" />
+
