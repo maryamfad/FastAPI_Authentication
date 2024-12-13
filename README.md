@@ -44,8 +44,7 @@ pip install -r requirements.txt
 
 5. **Run the Flask App**:
 ```bash
-cd ToDoApp
-uvicorn main:app --reload
+uvicorn TodoApp.main:app --reload
 ```
 6. **Access the Application**:
 Once the server is running, you can access the application at http://127.0.0.1:8000/.
