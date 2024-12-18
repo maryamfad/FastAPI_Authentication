@@ -48,7 +48,7 @@ def test_todo():
         db.add(todo)
         db.commit()
         db.refresh(todo)
-
+        print(f"Created Todo ID: {todo.id}")  # Debug output
         yield todo
     finally:
         with engine.connect() as connection:
